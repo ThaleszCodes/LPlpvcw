@@ -1,0 +1,629 @@
+/* ==========================================================================
+   LPVCW — Landing Page Vibe Creating WorkFlow
+   Hero Section Design System & Styles
+   ========================================================================== */
+
+/* --- Local Font Definitions (Plus Jakarta Sans) --- */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/plus-jakarta-sans-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('fonts/plus-jakarta-sans-500.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('fonts/plus-jakarta-sans-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('fonts/plus-jakarta-sans-700.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('fonts/plus-jakarta-sans-800.woff2') format('woff2');
+}
+
+/* --- Design Tokens --- */
+:root {
+  --bg-deep: #000000;
+  --text-pure: #ffffff;
+  --text-silver-top: #ffffff;
+  --text-silver-bottom: #b0b7c4;
+  --text-muted: #8e95a2;
+  --text-dim: rgba(255, 255, 255, 0.45);
+  --border-glass: rgba(255, 255, 255, 0.12);
+  --border-glass-top: rgba(255, 255, 255, 0.26);
+  --border-glass-hover: rgba(255, 255, 255, 0.32);
+  --bg-card: rgba(8, 10, 14, 0.65);
+  --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* --- Base & Reset --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  background-color: var(--bg-deep);
+  color: var(--text-pure);
+  font-family: var(--font-main);
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--bg-deep);
+  color: var(--text-pure);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+.page-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  background-color: var(--bg-deep);
+}
+
+/* ==========================================================================
+   HERO SECTION
+   ========================================================================== */
+.hero-section {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  min-height: 780px;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-deep);
+  overflow: hidden;
+}
+
+/* Hero Background Asset */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('assets/herobg.png');
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Ambient Track & Glowing Nodes (Behind Cards) */
+.workflow-track {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.track-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.glow-node {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 6px 1.5px rgba(255, 255, 255, 0.95),
+              0 0 16px 4px rgba(195, 220, 255, 0.45);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* Exact Coordinates matching approved concept */
+.node-1 { left: 4.25%;  top: 67.2%; }
+.node-2 { left: 23.38%; top: 65.8%; }
+.node-3 { left: 40.73%; top: 64.2%; }
+.node-4 { left: 59.09%; top: 64.2%; }
+.node-5 { left: 76.50%; top: 65.7%; }
+.node-6 { left: 95.87%; top: 67.4%; }
+
+/* ==========================================================================
+   HEADER
+   ========================================================================== */
+.hero-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  padding: 34px clamp(28px, 5vw, 82px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 30;
+  background: transparent;
+  animation: fadeIn 0.8s var(--ease-smooth) forwards;
+}
+
+.header-left {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.brand-logo {
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  color: var(--text-pure);
+  line-height: 1;
+}
+
+.brand-tagline {
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--text-dim);
+  line-height: 1;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.btn-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #eeeeee;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  letter-spacing: -0.01em;
+  transition: border-color 0.3s var(--ease-smooth),
+              background 0.3s var(--ease-smooth),
+              box-shadow 0.3s var(--ease-smooth),
+              transform 0.3s var(--ease-smooth);
+}
+
+.btn-download:hover {
+  border-color: rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+.icon-download {
+  opacity: 0.85;
+  transition: transform 0.25s var(--ease-smooth);
+}
+
+.btn-download:hover .icon-download {
+  transform: translateY(1px);
+  opacity: 1;
+}
+
+/* ==========================================================================
+   HERO BODY & CENTER CONTENT
+   ========================================================================== */
+.hero-body {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-top: clamp(96px, 16.5vh, 168px);
+}
+
+.hero-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 20px;
+  animation: heroTextReveal 0.9s var(--ease-smooth) forwards;
+}
+
+.hero-headline {
+  font-size: clamp(2.6rem, 4.4vw, 4.3rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+  color: var(--text-pure);
+  margin: 0;
+  text-wrap: balance;
+}
+
+.headline-silver {
+  background: linear-gradient(180deg, var(--text-silver-top) 32%, var(--text-silver-bottom) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+}
+
+.hero-subheadline {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.58;
+  letter-spacing: -0.005em;
+  color: var(--text-muted);
+  max-width: 630px;
+  margin: 20px auto 28px auto;
+  text-align: center;
+}
+
+.hero-cta-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background-color: #ffffff;
+  color: #08090a;
+  font-weight: 600;
+  font-size: 14.5px;
+  letter-spacing: -0.015em;
+  padding: 13.5px 34px;
+  border-radius: 9999px;
+  text-decoration: none;
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.35), 0 0 55px rgba(255, 255, 255, 0.12);
+  transition: transform 0.25s var(--ease-smooth),
+              box-shadow 0.25s var(--ease-smooth);
+}
+
+.hero-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 35px rgba(255, 255, 255, 0.52), 0 0 75px rgba(255, 255, 255, 0.22);
+}
+
+.cta-arrow {
+  transition: transform 0.25s var(--ease-smooth);
+}
+
+.hero-cta:hover .cta-arrow {
+  transform: translateX(3px);
+}
+
+/* ==========================================================================
+   WORKFLOW SECTION
+   ========================================================================== */
+.workflow-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1410px;
+  margin: clamp(26px, 4.2vh, 44px) auto 0 auto;
+  perspective: 1200px;
+  padding: 0 10px;
+  animation: workflowReveal 1s var(--ease-smooth) 0.15s both;
+}
+
+/* Cards Container */
+.workflow-cards {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  transform-style: preserve-3d;
+}
+
+/* Individual Workflow Card */
+.workflow-card {
+  width: 202px;
+  height: 232px;
+  border-radius: 16px;
+  background: var(--bg-card);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--border-glass);
+  border-top: 1px solid var(--border-glass-top);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2),
+              0 14px 34px rgba(0, 0, 0, 0.7);
+  padding: 22px 20px 18px 20px;
+  display: flex;
+  flex-direction: column;
+  cursor: default;
+  transition: transform 0.4s var(--ease-smooth),
+              border-color 0.4s var(--ease-smooth),
+              box-shadow 0.4s var(--ease-smooth);
+  transform-origin: center center;
+}
+
+/* Card Depth & Perspective Alignment */
+.card-1 {
+  transform: perspective(1000px) rotateY(15deg) translateY(22px);
+}
+
+.card-2 {
+  transform: perspective(1000px) rotateY(7deg) translateY(8px);
+}
+
+.card-3 {
+  transform: perspective(1000px) rotateY(0deg) translateY(0px);
+}
+
+.card-4 {
+  transform: perspective(1000px) rotateY(-7deg) translateY(8px);
+}
+
+.card-5 {
+  transform: perspective(1000px) rotateY(-15deg) translateY(22px);
+}
+
+/* Card Hover Microinteraction */
+.card-1:hover {
+  transform: perspective(1000px) rotateY(11deg) translateY(16px) scale(1.02);
+  border-color: var(--border-glass-hover);
+  border-top-color: rgba(255, 255, 255, 0.45);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35),
+              0 18px 44px rgba(0, 0, 0, 0.85),
+              0 0 24px rgba(255, 255, 255, 0.08);
+}
+
+.card-2:hover {
+  transform: perspective(1000px) rotateY(5deg) translateY(2px) scale(1.02);
+  border-color: var(--border-glass-hover);
+  border-top-color: rgba(255, 255, 255, 0.45);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35),
+              0 18px 44px rgba(0, 0, 0, 0.85),
+              0 0 24px rgba(255, 255, 255, 0.08);
+}
+
+.card-3:hover {
+  transform: perspective(1000px) rotateY(0deg) translateY(-6px) scale(1.02);
+  border-color: var(--border-glass-hover);
+  border-top-color: rgba(255, 255, 255, 0.45);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35),
+              0 18px 44px rgba(0, 0, 0, 0.85),
+              0 0 24px rgba(255, 255, 255, 0.08);
+}
+
+.card-4:hover {
+  transform: perspective(1000px) rotateY(-5deg) translateY(2px) scale(1.02);
+  border-color: var(--border-glass-hover);
+  border-top-color: rgba(255, 255, 255, 0.45);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35),
+              0 18px 44px rgba(0, 0, 0, 0.85),
+              0 0 24px rgba(255, 255, 255, 0.08);
+}
+
+.card-5:hover {
+  transform: perspective(1000px) rotateY(-11deg) translateY(16px) scale(1.02);
+  border-color: var(--border-glass-hover);
+  border-top-color: rgba(255, 255, 255, 0.45);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35),
+              0 18px 44px rgba(0, 0, 0, 0.85),
+              0 0 24px rgba(255, 255, 255, 0.08);
+}
+
+/* Card Internal Layout */
+.card-inner {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.step-num {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-dim);
+  letter-spacing: -0.01em;
+  margin-bottom: 20px;
+}
+
+.step-icon {
+  color: var(--text-pure);
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+}
+
+.step-title {
+  font-size: 16.5px;
+  font-weight: 600;
+  color: var(--text-pure);
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.step-desc {
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: var(--text-muted);
+  max-width: 162px;
+}
+
+/* ==========================================================================
+   FOLD CONTINUITY
+   ========================================================================== */
+.hero-fold-blend {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, var(--bg-deep));
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ==========================================================================
+   ANIMATIONS
+   ========================================================================== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes heroTextReveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes workflowReveal {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVENESS
+   ========================================================================== */
+
+/* Tablet & Compact Desktop (768px - 1200px) */
+@media (max-width: 1200px) {
+  .hero-section {
+    height: auto;
+    min-height: 100svh;
+  }
+
+  .workflow-wrapper {
+    perspective: none;
+    max-width: 100%;
+    padding: 0 20px;
+    margin-top: 40px;
+  }
+
+  .workflow-cards {
+    gap: 14px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 24px;
+    justify-content: flex-start;
+  }
+
+  .workflow-cards::-webkit-scrollbar {
+    display: none;
+  }
+
+  .workflow-card {
+    flex: 0 0 190px;
+    scroll-snap-align: center;
+    transform: none !important;
+  }
+
+  .workflow-track {
+    display: none;
+  }
+}
+
+/* Mobile (< 768px) */
+@media (max-width: 767px) {
+  .hero-header {
+    padding: 24px 20px;
+  }
+
+  .header-left {
+    gap: 10px;
+  }
+
+  .brand-tagline {
+    display: none;
+  }
+
+  .hero-body {
+    padding-top: 100px;
+    padding-bottom: 40px;
+  }
+
+  .hero-headline {
+    font-size: clamp(2rem, 8.5vw, 2.75rem);
+    line-height: 1.1;
+  }
+
+  .sub-break {
+    display: none;
+  }
+
+  .hero-subheadline {
+    font-size: 14.5px;
+    line-height: 1.5;
+    margin: 16px auto 24px auto;
+  }
+
+  .hero-bg {
+    background-position: center 75%;
+  }
+
+  .workflow-cards {
+    gap: 14px;
+    padding: 10px 20px 24px 20px;
+  }
+
+  .workflow-card {
+    flex: 0 0 215px;
+    min-height: 220px;
+    padding: 20px 18px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
