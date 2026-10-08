@@ -628,6 +628,11 @@ main,
 .result {
   animation: panel-enter 320ms var(--ease) both;
 }
+.sidebar {
+  transition:
+    transform 280ms var(--ease),
+    background-color 240ms var(--ease);
+}
 @keyframes panel-enter {
   from {
     opacity: 0;
