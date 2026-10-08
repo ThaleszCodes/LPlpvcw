@@ -56,7 +56,7 @@ export const fresh = () => ({
   onboarding: { step: 0, completed: false },
   projects: [],
   favorites: [],
-  theme: "dark",
+  theme: "light",
   brief: {},
   composer: { prompt: "", project: "", context: "" },
   sections: [],

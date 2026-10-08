@@ -37,10 +37,12 @@ try {
     await visit("/app");
     assert.ok(
       await page
-        .getByRole("heading", { name: "Da direção visual à implementação." })
+        .getByRole("heading", {
+          name: "Vamos tirar sua próxima landing page do papel.",
+        })
         .count(),
     );
-    await page.getByRole("link", { name: "Conhecer o LPVCW" }).click();
+    await visit("/app/onboarding");
     await page.getByRole("button", { name: "Continuar", exact: true }).click();
     await page.reload();
     await page.waitForSelector(".step-number");
@@ -52,7 +54,9 @@ try {
     await page.getByRole("button", { name: "Concluir introdução" }).click();
     assert.ok(
       await page
-        .getByRole("heading", { name: "Tudo pronto para aplicar." })
+        .getByRole("heading", {
+          name: "Vamos tirar sua próxima landing page do papel.",
+        })
         .count(),
     );
   });
@@ -193,35 +197,24 @@ try {
     assert.equal((await dl).suggestedFilename(), "auditoria-lpvcw.txt");
   });
   let backup;
-  await check("backup download, validation, restore and theme", async () => {
+  await check("backup download, validation and restore", async () => {
     await visit("/app/settings");
-    await page.getByLabel("Tema", { exact: true }).selectOption("light");
-    await page.reload();
-    await page.waitForSelector("#theme");
-    assert.equal(
-      await page.locator("html").getAttribute("data-theme"),
-      "light",
-    );
     const dl = page.waitForEvent("download");
     await page.getByRole("button", { name: "Exportar backup" }).click();
     backup = await readFile(await (await dl).path());
-    await page
-      .locator("#backup-file")
-      .setInputFiles({
-        name: "invalid.json",
-        mimeType: "application/json",
-        buffer: Buffer.from("{}"),
-      });
+    await page.locator("#backup-file").setInputFiles({
+      name: "invalid.json",
+      mimeType: "application/json",
+      buffer: Buffer.from("{}"),
+    });
     await page.waitForFunction(() =>
       document.querySelector("#toast").textContent.includes("Backup inválido"),
     );
-    await page
-      .locator("#backup-file")
-      .setInputFiles({
-        name: "backup.json",
-        mimeType: "application/json",
-        buffer: backup,
-      });
+    await page.locator("#backup-file").setInputFiles({
+      name: "backup.json",
+      mimeType: "application/json",
+      buffer: backup,
+    });
     await page.getByRole("button", { name: "Confirmar", exact: true }).click();
     await visit("/app/projects");
     assert.ok(
@@ -246,7 +239,7 @@ try {
         .click();
       await page.reload();
       await page.waitForSelector("h1");
-      assert.equal(await page.locator(".project-row").count(), 0);
+      assert.equal(await page.locator(".project-item").count(), 0);
     },
   );
   await check(
@@ -275,10 +268,8 @@ try {
           path + " overflow",
         );
       }
-      await page.getByRole("button", { name: "Abrir navegação" }).click();
-      await page.getByRole("link", { name: "Acervo", exact: true }).click();
-      await page.waitForSelector("#search");
-      assert.equal(await page.locator(".sidebar.open").count(), 0);
+      await page.locator('.mobile-nav a[href="/app/prompts"]').click();
+      await page.waitForSelector("#prompt-text");
       await page.screenshot({
         path: process.env.SCREENSHOT_DIR
           ? process.env.SCREENSHOT_DIR + "/mobile.png"

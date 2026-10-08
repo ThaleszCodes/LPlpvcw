@@ -1,3 +1,4 @@
+import { createViews } from "./views.js";
 import { marked } from "./vendor/marked.js";
 import {
   KEY,
@@ -112,12 +113,7 @@ function syncNav() {
   sidebar.setAttribute("aria-hidden", String(hidden));
 }
 function theme() {
-  document.documentElement.dataset.theme =
-    state.theme === "system"
-      ? matchMedia("(prefers-color-scheme:light)").matches
-        ? "light"
-        : "dark"
-      : state.theme;
+  document.documentElement.dataset.theme = "light";
 }
 function go(path) {
   history.pushState({}, "", path);
@@ -132,55 +128,89 @@ function route() {
 }
 const nav = [
   ["", "Início", "house"],
-  ["onboarding", "Introdução", "compass"],
-  ["library", "Acervo", "book-open"],
   ["projects", "Projetos", "folder"],
-  ["tools", "Ferramentas", "sliders-horizontal"],
-  ["settings", "Preferências", "settings-2"],
+  ["methods", "Métodos", "book-open"],
+  ["prompts", "Prompts", "layers"],
 ];
+const views = createViews({
+  esc,
+  icon,
+  link,
+  button,
+  heading,
+  progress,
+  criteria,
+  promptOptions,
+  getState: () => state,
+  getMaterials: () => materials,
+});
 function shell(content) {
   const [page] = route();
+  const active = page || "";
+  const previousNav = Number(
+    document.querySelector(".mobile-nav")?.dataset.active || 0,
+  );
+  const activeNav = Math.max(
+    0,
+    nav.findIndex(([p]) => p === active),
+  );
+  const brand =
+    '<span class="brand-mark">L</span><span>LPVCW<small>PLATFORM</small></span>';
+  const items = nav
+    .map(
+      ([p, t, i]) =>
+        '<a href="/app' +
+        (p ? "/" + p : "") +
+        '" ' +
+        (active === p ? 'aria-current="page"' : "") +
+        ">" +
+        icon(i) +
+        "<span>" +
+        t +
+        "</span></a>",
+    )
+    .join("");
   root.innerHTML =
     '<aside class="sidebar" id="sidebar">' +
-    link(
-      "/app",
-      '<span class="brand-mark">L</span><span>LPVCW<small>Platform</small></span>',
-      "brand",
-    ) +
+    link("/app", brand, "brand") +
     '<nav aria-label="Navegação principal">' +
-    nav
-      .map(
-        ([p, t, i]) =>
-          '<a href="/app' +
-          (p ? "/" + p : "") +
-          '" ' +
-          ((page || "") === p ? 'aria-current="page"' : "") +
-          ">" +
-          icon(i) +
-          t +
-          "</a>",
-      )
-      .join("") +
+    items +
     "</nav><footer>" +
-    link("/", icon("external-link") + "LandVibes") +
-    'Gratuito · versão 1.0<br>Dados salvos neste dispositivo</footer></aside><div class="workspace"><header class="topbar">' +
-    button(
-      "menu",
-      icon("menu"),
-      "menu icon-button",
-      'aria-label="Abrir navegação" aria-expanded="false" aria-controls="sidebar"',
-    ) +
-    '<span class="crumb">' +
-    (nav.find(([p]) => p === (page || ""))?.[1] || "Início") +
-    '</span><span class="local">' +
-    icon("hard-drive") +
-    '<span>Armazenamento local</span></span></header><main id="main">' +
+    link("/app/onboarding", icon("circle-help") + "Ajuda") +
+    link("/app/library", icon("archive") + "Acervo oficial") +
+    link("/app/tools", icon("sliders-horizontal") + "Ferramentas") +
+    link("/app/settings", icon("settings-2") + "Preferências") +
+    '<small>Dados neste dispositivo · sem sincronização</small></footer></aside><div class="workspace"><header class="topbar">' +
+    link("/app", brand, "brand mobile-brand") +
+    '<span class="crumb">Workspace / <b>' +
+    (nav.find(([p]) => p === active)?.[1] || "LPVCW") +
+    "</b></span>" +
+    '<a href="/app/settings" class="profile" aria-label="Abrir preferências">' +
+    icon("user-round") +
+    "</a>" +
+    '</header><main id="main">' +
     content +
-    "</main></div>";
+    '</main></div><nav class="mobile-nav" data-active="' +
+    activeNav +
+    '" aria-label="Navegação mobile"><span class="nav-indicator" aria-hidden="true" style="transform:translateX(' +
+    activeNav * 100 +
+    '%)"></span>' +
+    items +
+    "</nav>";
   document.querySelector("h1")?.setAttribute("tabindex", "-1");
   window.lucide?.createIcons();
   theme();
   syncNav();
+  if (!matchMedia("(prefers-reduced-motion:reduce)").matches)
+    document
+      .querySelector(".nav-indicator")
+      ?.animate(
+        [
+          { transform: "translateX(" + previousNav * 100 + "%)" },
+          { transform: "translateX(" + activeNav * 100 + "%)" },
+        ],
+        { duration: 240, easing: "cubic-bezier(.22,1,.36,1)" },
+      );
 }
 const materialRow = (m) =>
   '<a class="library-row" href="/app/library/' +
@@ -201,95 +231,9 @@ const materialRow = (m) =>
   m.category +
   "</span></a>";
 function dashboard() {
-  const recent = [...state.projects]
-    .sort((a, b) => b.updated.localeCompare(a.updated))
-    .slice(0, 3);
-  return (
-    '<div class="eyebrow">Seu espaço de trabalho</div>' +
-    heading(
-      "Da direção visual à implementação.",
-      "Consulte a metodologia e avance no seu projeto, uma seção por vez.",
-    ) +
-    '<div class="intro"><div><h2>' +
-    (state.onboarding.completed
-      ? "Tudo pronto para aplicar."
-      : "Comece pelo fluxo, não pelo código.") +
-    "</h2><p>" +
-    (state.onboarding.completed
-      ? "A introdução está concluída. Seus materiais e ferramentas continuam disponíveis."
-      : "Uma introdução curta ao Concept, às referências e à continuidade entre dobras.") +
-    "</p></div>" +
-    link(
-      "/app/onboarding",
-      state.onboarding.completed
-        ? "Rever introdução"
-        : state.onboarding.step
-          ? "Continuar introdução"
-          : "Conhecer o LPVCW",
-      "button primary",
-    ) +
-    '</div><div class="grid"><div><section class="section"><div class="section-head"><h2>Materiais essenciais</h2>' +
-    link("/app/library", "Ver acervo", "text-link") +
-    "</div>" +
-    materials
-      .filter((m) => ["manual", "ativacao", "prompts-rapidos"].includes(m.slug))
-      .map(
-        (m) =>
-          '<div class="row"><a href="/app/library/' +
-          m.slug +
-          '" class="row-link"><h3>' +
-          esc(m.title.replace("LPVCW — ", "")) +
-          "</h3><small>" +
-          short(m) +
-          "</small></a>" +
-          (m.category === "Prompt"
-            ? button(
-                "copy-material",
-                icon("copy"),
-                "icon-button",
-                'data-slug="' +
-                  m.slug +
-                  '" aria-label="Copiar ' +
-                  esc(m.title) +
-                  '"',
-              )
-            : "") +
-          "</div>",
-      )
-      .join("") +
-    '</section><section><div class="section-head"><h2>Projetos recentes</h2>' +
-    link("/app/projects", "Ver projetos", "text-link") +
-    "</div>" +
-    (recent.length
-      ? recent
-          .map(
-            (p) =>
-              '<a class="row row-link" href="/app/projects/' +
-              p.id +
-              '"><div><h3>' +
-              esc(p.title) +
-              "</h3><small>" +
-              progress(p.checks) +
-              "% do checklist concluído</small></div>" +
-              icon("folder") +
-              "</a>",
-          )
-          .join("")
-      : '<div class="empty"><h3>Seu primeiro projeto começa aqui.</h3><p>Registre a oferta, organize as decisões e acompanhe a aplicação da metodologia.</p>' +
-        link("/app/projects/new", "Criar projeto", "button") +
-        "</div>") +
-    '</section></div><section><h2>Na prática</h2><div class="tool-links">' +
-    toolDefs
-      .map((t) =>
-        link(
-          "/app/tools/" + t.id,
-          icon(t.icon) + "<span>" + t.title + "</span>",
-        ),
-      )
-      .join("") +
-    '</div><p class="muted" style="font-size:12px;margin-top:24px">Sem geração automática. Você define o contexto, aprova a direção e conduz o processo.</p></section></div>'
-  );
+  return views.home();
 }
+
 const steps = [
   [
     "Primeiro a direção. Depois o código.",
@@ -397,7 +341,7 @@ function animateEntry(direction = 0) {
       { opacity: 1, transform: "none" },
     ],
     {
-      duration: page === "onboarding" ? 420 : 320,
+      duration: page === "onboarding" ? 280 : 240,
       easing: "cubic-bezier(.22,1,.36,1)",
     },
   );
@@ -449,7 +393,7 @@ function moveOnboarding(direction) {
     const target = after.getBoundingClientRect().height;
     if (Math.abs(target - height) > 1)
       after.animate([{ height: height + "px" }, { height: target + "px" }], {
-        duration: 420,
+        duration: 280,
         easing: "cubic-bezier(.22,1,.36,1)",
       });
   }
@@ -595,50 +539,7 @@ function checkList(checked, scope) {
   );
 }
 function projects() {
-  return (
-    heading(
-      "Projetos",
-      "Seu contexto, decisões e progresso em um só lugar.",
-      link(
-        "/app/projects/new",
-        icon("plus") + "Criar projeto",
-        "button primary",
-      ),
-    ) +
-    (state.projects.length
-      ? state.projects
-          .map(
-            (p) =>
-              '<div class="project-row"><a href="/app/projects/' +
-              p.id +
-              '" class="row-link"><h3>' +
-              esc(p.title) +
-              "</h3><p>" +
-              esc(p.objective || "Objetivo ainda não definido") +
-              '</p><small class="meta">Atualizado em ' +
-              new Date(p.updated).toLocaleDateString("pt-BR") +
-              '</small></a><div class="project-progress"><span class="meta">' +
-              progress(p.checks) +
-              "% concluído</span>" +
-              bar(progress(p.checks)) +
-              "</div>" +
-              button(
-                "delete-project",
-                icon("trash-2"),
-                "icon-button",
-                'data-id="' +
-                  p.id +
-                  '" aria-label="Excluir ' +
-                  esc(p.title) +
-                  '"',
-              ) +
-              "</div>",
-          )
-          .join("")
-      : '<div class="empty"><h3>Nenhum projeto por enquanto.</h3><p>Comece com um objetivo e uma oferta. O checklist ajuda a acompanhar as etapas reais do LPVCW.</p>' +
-        link("/app/projects/new", "Criar meu primeiro projeto", "button") +
-        "</div>")
-  );
+  return views.projects();
 }
 function projectEditor(id) {
   const p =
@@ -920,24 +821,12 @@ function settings() {
       "Preferências",
       "Seus dados ficam neste navegador. Não há conta ou sincronização entre aparelhos.",
     ) +
-    '<div class="setting"><div><h3>Aparência</h3><p>Escolha o tema para este dispositivo.</p></div><select id="theme" aria-label="Tema">' +
-    [
-      ["dark", "Escuro"],
-      ["light", "Claro"],
-      ["system", "Sistema"],
-    ]
-      .map(
-        ([v, l]) =>
-          '<option value="' +
-          v +
-          '" ' +
-          (state.theme === v ? "selected" : "") +
-          ">" +
-          l +
-          "</option>",
-      )
-      .join("") +
-    '</select></div><div class="setting"><div><h3>Introdução</h3><p>Recomece o onboarding. Seus projetos permanecem salvos.</p></div>' +
+    '<div class="setting"><div><h3>Seu espaço de trabalho</h3><p>Acesse os materiais, ferramentas e introdução.</p></div><div class="actions">' +
+    link("/app/library", "Acervo oficial", "button") +
+    link("/app/tools", "Ferramentas", "button") +
+    link("/app/onboarding", "Ajuda", "button") +
+    "</div></div>" +
+    '<div class="setting"><div><h3>Aparência</h3><p>Interface clara em preto, branco e cinzas neutros.</p></div></div><div class="setting"><div><h3>Introdução</h3><p>Recomece o onboarding. Seus projetos permanecem salvos.</p></div>' +
     button("reset-onboarding", "Reiniciar introdução") +
     '</div><div class="setting"><div><h3>Backup dos dados locais</h3><p>Exporte projetos, favoritos e rascunhos. Guarde o arquivo para restaurar em outro dispositivo.</p></div>' +
     button("export", icon("download") + "Exportar backup") +
@@ -960,6 +849,8 @@ function render(direction = 0) {
   const [page, id] = route();
   let content;
   if (!page) content = dashboard();
+  else if (page === "methods") content = views.methods();
+  else if (page === "prompts") content = views.prompts();
   else if (page === "onboarding") content = onboarding();
   else if (page === "library") content = id ? materialPage(id) : library();
   else if (page === "projects") content = id ? projectEditor(id) : projects();
@@ -978,10 +869,10 @@ function render(direction = 0) {
     pre.prepend(b);
   });
 }
-async function copy(text) {
+async function copy(text, feedback = "Copiado para a área de transferência.") {
   try {
     await navigator.clipboard.writeText(text);
-    toast("Copiado para a área de transferência.");
+    toast(feedback);
   } catch {
     const area = document.createElement("textarea");
     area.value = text;
@@ -990,11 +881,15 @@ async function copy(text) {
     area.select();
     const ok = document.execCommand("copy");
     area.remove();
-    toast(
-      ok
-        ? "Copiado para a área de transferência."
-        : "Não foi possível copiar. Selecione o texto e copie manualmente.",
-    );
+    if (ok) toast(feedback);
+    else {
+      dialog.innerHTML =
+        '<h2>Cópia manual</h2><p>O navegador bloqueou a cópia. Selecione o texto abaixo e use a opção copiar do seu dispositivo.</p><textarea aria-label="Texto para copiar manualmente" class="manual-copy"></textarea><button id="close-copy">Fechar</button>';
+      dialog.querySelector("textarea").value = text;
+      dialog.showModal();
+      dialog.querySelector("textarea").select();
+      dialog.querySelector("#close-copy").onclick = () => dialog.close();
+    }
   }
 }
 function download(text, name, type = "text/plain") {
@@ -1038,7 +933,7 @@ function showResult(text, title) {
     block: "start",
   });
 }
-root.addEventListener("click", (e) => {
+function handleClick(e) {
   const a = e.target.closest("a");
   if (
     a &&
@@ -1054,6 +949,8 @@ root.addEventListener("click", (e) => {
   const b = e.target.closest("[data-action]");
   if (!b) return;
   const { action, slug, id } = b.dataset;
+  if (views.handle(action, b, { render, save, copy, toast, go, dialog, state }))
+    return;
   const m = materials.find((m) => m.slug === slug);
   if (action === "menu") {
     const open = document.querySelector("#sidebar").classList.toggle("open");
@@ -1168,9 +1065,13 @@ root.addEventListener("click", (e) => {
     toast("Backup exportado.");
   }
   if (action === "import") document.querySelector("#backup-file").click();
-});
+}
+root.addEventListener("click", handleClick);
+dialog.addEventListener("click", handleClick);
+dialog.addEventListener("input", (e) => views.input(e.target));
 root.addEventListener("input", (e) => {
   const t = e.target;
+  if (views.input(t)) return;
   if (t.id === "search") {
     search = t.value;
     document.querySelector("#library-results").innerHTML = libraryResults();

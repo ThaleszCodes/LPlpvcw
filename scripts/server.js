@@ -17,7 +17,7 @@ createServer(async (req, res) => {
     const url = new URL(req.url, "http://localhost");
     let path = decodeURIComponent(url.pathname);
     if (
-      /^\/app(?:\/(?:onboarding|library(?:\/[^/]+)?|projects(?:\/[^/]+)?|tools(?:\/[^/]+)?|settings))?\/?$/.test(
+      /^\/app(?:\/(?:methods|prompts|onboarding|library(?:\/[^/]+)?|projects(?:\/[^/]+)?|tools(?:\/[^/]+)?|settings))?\/?$/.test(
         path,
       )
     )

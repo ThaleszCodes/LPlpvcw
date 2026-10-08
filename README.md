@@ -71,7 +71,7 @@ são uma checklist derivada dos fundamentos, com links para os documentos origin
 ### Testes de navegador
 
 `tests/browser.mjs` valida a LP, as rotas, onboarding, busca/filtros,
-cópia integral, projetos/persistência, ferramentas, backup, temas, exclusão
+cópia integral, projetos/persistência, ferramentas, backup, exclusão
 e overflow no mobile. Requer Playwright e Chromium disponíveis no ambiente.
 Com o servidor local em execução:
 
@@ -82,3 +82,17 @@ node tests/browser.mjs
 Use `PLAYWRIGHT_MODULE` para um módulo Playwright externo,
 `CHROMIUM_PATH` para um executável Chromium e `BASE_URL` para testar
 um deploy. Os resultados visuais são gravados em `test-results/`.
+
+### Interface de referência
+
+As abas Início, Projetos, Métodos e Prompts compartilham o shell claro e
+a navegação mobile flutuante. `/app/methods` demonstra seis princípios
+derivados dos documentos oficiais; `/app/prompts` permite buscar, favoritar,
+editar e copiar os 23 prompts completos. A edição é temporária; o montador
+reutiliza a versão oficial do prompt e adiciona o contexto escolhido.
+A aparência desta versão é clara; a preferência de tema antiga continua no
+backup por compatibilidade, sem controlar a nova interface.
+
+`tests/reference-ui.mjs` verifica os novos fluxos e overflow em 360, 390,
+430, 768, 1280 e 1440px. Execute com o servidor em execução e as mesmas
+variáveis do teste de navegador. `SCREENSHOT_DIR` habilita capturas das quatro abas.

@@ -8,6 +8,14 @@
       "destination": "/app/index.html"
     },
     {
+      "source": "/app/methods",
+      "destination": "/app/index.html"
+    },
+    {
+      "source": "/app/prompts",
+      "destination": "/app/index.html"
+    },
+    {
       "source": "/app/onboarding",
       "destination": "/app/index.html"
     },
