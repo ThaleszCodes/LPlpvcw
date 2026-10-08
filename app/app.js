@@ -170,7 +170,7 @@ function shell(content) {
       "menu icon-button",
       'aria-label="Abrir navegação" aria-expanded="false" aria-controls="sidebar"',
     ) +
-    '<span class="crumb">Workspace / ' +
+    '<span class="crumb">' +
     (nav.find(([p]) => p === (page || ""))?.[1] || "Início") +
     '</span><span class="local">' +
     icon("hard-drive") +
@@ -330,8 +330,18 @@ const steps = [
 ];
 function onboarding() {
   const s = steps[state.onboarding.step];
+  const chapterIcons = [
+    "layers",
+    "file-pen-line",
+    "layout-template",
+    "panels-top-left",
+    "workflow",
+    "folder-check",
+  ];
   return (
-    '<div class="onboarding"><div class="eyebrow">Introdução ao LPVCW</div><div class="steps" aria-label="Etapa ' +
+    '<div class="onboarding"><div class="onboarding-header"><div class="eyebrow">Introdução ao LPVCW</div><p class="step-number">' +
+    String(state.onboarding.step + 1).padStart(2, "0") +
+    ' / 06</p></div><div class="steps" aria-label="Etapa ' +
     (state.onboarding.step + 1) +
     ' de 6">' +
     steps
@@ -342,9 +352,9 @@ function onboarding() {
           '"></span>',
       )
       .join("") +
-    '</div><p class="step-number">' +
-    String(state.onboarding.step + 1).padStart(2, "0") +
-    " / 06</p><h1>" +
+    '</div><div class="onboarding-stage"><div class="onboarding-content"><div class="chapter-icon">' +
+    icon(chapterIcons[state.onboarding.step]) +
+    "</div><h1>" +
     s[0] +
     '</h1><p class="explanation">' +
     s[1] +
@@ -352,7 +362,7 @@ function onboarding() {
     s[2] +
     "</p></div>" +
     link("/app/library/" + s[3], "Consultar material oficial", "text-link") +
-    '<div class="step-footer">' +
+    '</div><div class="step-footer">' +
     button(
       "step-back",
       "Voltar",
@@ -360,14 +370,90 @@ function onboarding() {
       "" + (!state.onboarding.step ? "disabled" : ""),
     ) +
     '<div class="actions">' +
-    button("skip", "Pular por enquanto", "ghost") +
     button(
       "step-next",
       state.onboarding.step === 5 ? "Concluir introdução" : "Continuar",
       "primary",
     ) +
-    "</div></div></div>"
+    '</div></div></div><div class="onboarding-footer">' +
+    button("skip", "Pular por enquanto", "ghost") +
+    "</div></div>"
   );
+}
+function animateEntry(direction = 0) {
+  if (matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+  const [page] = route();
+  const surface = document.querySelector(
+    page === "onboarding" ? ".onboarding-content" : "#main",
+  );
+  if (!surface?.animate) return;
+  const from =
+    page === "onboarding"
+      ? "translateX(" + (direction < 0 ? -10 : 10) + "px)"
+      : "translateY(6px)";
+  surface.animate(
+    [
+      { opacity: 0, transform: from },
+      { opacity: 1, transform: "none" },
+    ],
+    {
+      duration: page === "onboarding" ? 420 : 320,
+      easing: "cubic-bezier(.22,1,.36,1)",
+    },
+  );
+}
+function moveOnboarding(direction) {
+  const before = document.querySelector(".onboarding-content");
+  const snapshot = before?.cloneNode(true);
+  const height = before?.getBoundingClientRect().height;
+  state.onboarding.step = Math.max(
+    0,
+    Math.min(5, state.onboarding.step + direction),
+  );
+  save();
+  render(direction);
+  const after = document.querySelector(".onboarding-content");
+  if (
+    snapshot &&
+    after &&
+    !matchMedia("(prefers-reduced-motion:reduce)").matches
+  ) {
+    snapshot.setAttribute("aria-hidden", "true");
+    snapshot.inert = true;
+    snapshot.classList.add("outgoing-step");
+    snapshot.querySelectorAll("[id]").forEach((el) => el.removeAttribute("id"));
+    snapshot.style.cssText = "position:absolute;inset:0;pointer-events:none;";
+    const overlay = document.createElement("div");
+    overlay.style.cssText =
+      "position:absolute;inset:38px 42px auto;pointer-events:none;";
+    if (matchMedia("(max-width:1100px)").matches)
+      overlay.style.cssText =
+        "position:absolute;inset:32px 32px auto;pointer-events:none;";
+    if (matchMedia("(max-width:720px)").matches)
+      overlay.style.cssText =
+        "position:absolute;inset:26px 22px auto;pointer-events:none;";
+    overlay.append(snapshot);
+    after.parentElement.append(overlay);
+    snapshot
+      .animate(
+        [
+          { opacity: 0.5, transform: "none" },
+          {
+            opacity: 0,
+            transform: "translateX(" + (direction < 0 ? 10 : -10) + "px)",
+          },
+        ],
+        { duration: 180, easing: "ease-out" },
+      )
+      .finished.finally(() => overlay.remove());
+    const target = after.getBoundingClientRect().height;
+    if (Math.abs(target - height) > 1)
+      after.animate([{ height: height + "px" }, { height: target + "px" }], {
+        duration: 420,
+        easing: "cubic-bezier(.22,1,.36,1)",
+      });
+  }
+  document.querySelector(".onboarding h1")?.focus({ preventScroll: true });
 }
 function library() {
   return (
@@ -870,7 +956,7 @@ function notFound() {
     ) + link("/app", "Voltar ao início", "button")
   );
 }
-function render() {
+function render(direction = 0) {
   const [page, id] = route();
   let content;
   if (!page) content = dashboard();
@@ -881,6 +967,7 @@ function render() {
   else if (page === "settings") content = settings();
   else content = notFound();
   shell(content);
+  animateEntry(direction);
   document.querySelectorAll(".document pre").forEach((pre) => {
     const b = document.createElement("button");
     b.type = "button";
@@ -990,15 +1077,11 @@ root.addEventListener("click", (e) => {
     render();
   }
   if (action === "step-back") {
-    state.onboarding.step = Math.max(0, state.onboarding.step - 1);
-    save();
-    render();
+    moveOnboarding(-1);
   }
   if (action === "step-next") {
     if (state.onboarding.step < 5) {
-      state.onboarding.step++;
-      save();
-      render();
+      moveOnboarding(1);
     } else {
       state.onboarding.completed = true;
       save();
