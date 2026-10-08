@@ -8,3 +8,9 @@ scratch/
 *.log
 .vscode/
 .idea/
+
+# Platform build and local tools
+node_modules/
+dist/
+.vercel/
+test-results/

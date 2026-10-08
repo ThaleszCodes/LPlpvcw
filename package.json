@@ -1,0 +1,12 @@
+{
+  "name": "lpvcw-platform",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/server.js",
+    "lint": "node --check app/app.js && node --check app/state.js && node --check scripts/build.js && node --check scripts/server.js",
+    "test": "node --test tests/state.test.js",
+    "build": "node scripts/build.js"
+  }
+}

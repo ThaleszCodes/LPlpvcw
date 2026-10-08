@@ -1,0 +1,43 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/app",
+      "destination": "/app/index.html"
+    },
+    {
+      "source": "/app/onboarding",
+      "destination": "/app/index.html"
+    },
+    {
+      "source": "/app/library",
+      "destination": "/app/index.html"
+    },
+    {
+      "source": "/app/library/:slug",
+      "destination": "/app/index.html"
+    },
+    {
+      "source": "/app/projects",
+      "destination": "/app/index.html"
+    },
+    {
+      "source": "/app/projects/:id",
+      "destination": "/app/index.html"
+    },
+    {
+      "source": "/app/tools",
+      "destination": "/app/index.html"
+    },
+    {
+      "source": "/app/tools/:tool",
+      "destination": "/app/index.html"
+    },
+    {
+      "source": "/app/settings",
+      "destination": "/app/index.html"
+    }
+  ]
+}
